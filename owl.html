@@ -1,0 +1,34 @@
+<html>
+    <head>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <!-- To-do App CSS -->
+        <link rel="stylesheet" href="style.css">
+        <!-- AngularJS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js"></script>
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    </head>
+    <form>
+        Enter a word: <input type="text" id="owlform" value=""><br>
+        <button id="owlbutton">Submit</button><br>
+        Definition: <span id="owldef">Hi</span>
+    </form>
+    
+    <script>
+        $("#owlbutton").click(function(event) {
+            event.preventDefault();
+            var url = "owl?q=" + $("#owlform").val();
+            $.getJSON(url, function(data) {
+                var everything;
+                everything = "<ul>";
+                $.each(data, function(i,item) {
+                    everything += "<li>" + data[i].defenition + "</li>";
+                });
+                everything += "</ul>";
+                console.log(everything);
+                $("#owldef").html(everything);
+                
+            });
+            });
+    </script>
+</html>

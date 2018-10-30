@@ -1,0 +1,171 @@
+<html>
+<head>
+<title>City Finder</title>
+<script
+  src="http://code.jquery.com/jquery-3.2.1.min.js">
+</script>
+<script>
+$(document).ready(function() {
+    $("#cityField" ).keyup(function() {
+    $.getJSON("getcity?q="+$("#cityField").val(),function(data) {
+    console.log(data);
+    console.log(data[0]);
+    console.log("Got "+data[0].city);
+    var everything;
+  everything = "<ul>";
+  $.each(data, function(i,item) {
+    everything += "<li> "+data[i].city;
+  });
+    
+  everything += "</ul>";
+  $("#txtHint").html(everything);
+  });
+});
+  $("#weatherButton").click(function(e){
+  var value = $("#cityField").val();
+  console.log(value);
+  $("#displayCity").text(value);
+  e.preventDefault();
+  var myurl = "https://api.openweathermap.org/data/2.5/weather?units=imperial&appid=d2dae59286d056f244f075a1ebc5db43&q=";
+  myurl += value;
+  console.log(myurl);
+  $.ajax({
+    url : myurl,
+    dataType : "json",
+        success : function(parsed_json) {
+            var location = parsed_json['name'];
+            var weather = parsed_json['weather'][0]['main'];
+            var temp = parsed_json['main']['temp'];
+            var weather_icon = parsed_json['weather'][0]['icon'];
+            var humidity = parsed_json['main']['humidity'];
+            var temp_min = parsed_json['main']['temp_min'];
+            console.log(temp_min);
+            console.log(weather);
+            var temp_max = parsed_json['main']['temp_max'];
+            var wind_speed = parsed_json['wind']['speed'];
+            everything = "<img src=\"http://openweathermap.org/img/w/" + weather_icon + ".png\"/>"
+            everything += "<ul>";
+            everything += "<li>Location: " + location;
+            everything += "<li>Weather: " + weather + " (" + temp + "&#8457;)";
+            everything += "<li>Low: " + temp_min + "&#8457; | High: " + temp_max + "&#8457;";
+            everything += "<li>Humidity: " + humidity + "%";
+            everything += "<li>Wind: " + wind_speed + " mph";
+            everything += "</ul>";
+            $("#weather").html(everything);
+            if (temp_min >= 65.0) {
+              $("body").css("background-image", "url(https://assets.bwbx.io/images/users/iqjWHBFdfxIU/ixhHo9drFkxc/v0/1200x803.jpg)");
+              $("body").css("color", "white");
+              $("body").css("text-shadow", "2px 2px 4px #000000");
+            }
+            if (weather == "Clouds") {
+              $("body").css("background-image", "url(https://i.amz.mshcdn.com/uBFP_rVu-pdv-rmTF3B9rJkRVg4=/http%3A%2F%2Fa.amz.mshcdn.com%2Fwp-content%2Fuploads%2F2016%2F04%2Fclouds_01.jpg)");
+              $("body").css("color", "white");
+              $("body").css("text-shadow", "2px 2px 4px #000000");
+            } 
+            if (temp_min < 65.0) {
+              $("body").css("background-image", "url(https://www.gi.alaska.edu/files/AlaskaScienceForum/frosted.JPG)");
+              $("body").css("color", "white");
+              $("body").css("text-shadow", "2px 2px 4px #000000");
+            }
+        }
+    });
+});
+ // https://worldwideinterweb.com/wp-content/uploads/2015/11/cold-weather-funny-images.jpg 
+  $("#searchButton").click(function(e){
+  var value = $("#searchField").val();
+  console.log(value);
+ // $("#displayCity").text(value);
+  e.preventDefault();
+  var myurl = "https://api.stackexchange.com/2.2/search?order=desc&sort=activity&intitle=";
+  myurl += value;
+  myurl += "&site=stackoverflow";
+  console.log(myurl);
+  $.ajax({
+    url : myurl,
+    dataType : "json",
+        success : function(parsed_json) {
+          console.log(parsed_json);
+          var everything = "<ul>";
+          var myarray = parsed_json["items"];
+          $.each(myarray,function(i,item) { 
+            console.log(myarray[i]);
+            everything += "<li> <a href=\""+myarray[i].link+"\" target=\"_blank\">";
+            everything += myarray[i].title;
+            everything += "</a></li>";
+            })
+          everything += "</ul>";
+          console.log(everything);
+          $("#answers").html(everything);
+        }
+})
+})
+})
+
+</script>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<style>
+
+
+.container{
+  margin: 20px auto;
+}
+  
+body {
+    background-image: url("https://assets.bwbx.io/images/users/iqjWHBFdfxIU/ixhHo9drFkxc/v0/1200x803.jpg");
+    color: white;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+a:link {
+    color: white;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+/* visited link */
+a:visited {
+    color: pink;
+}
+
+  
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row" style="text-align:center; margin-bottom: 50px;">
+      <h1>Weather and Computer Science Questions App</h1>
+      <p>(Try searching a cloudy or cold city)</p>
+      </div>
+  <div class="row">
+<form>
+Enter A Utah City: <input type="text" id="cityField" value="" style="color:black"><br>
+Suggestion: <span id="txtHint">Empty</span>
+<input id="weatherButton" type="submit" value="Submit" style="color: black;">
+</form>
+<p>City</p>
+<textarea id="displayCity" style="color:black">No City</textarea>
+</div>
+<div class="row">
+<p>Current Weather</p>
+<div id="weather">No weather</div>
+
+
+</div>
+<div class="row">
+<form>
+Enter a search item: <input type="text" id="searchField" value="" style="color:black">
+<input id="searchButton" type="submit" value="Submit" style="color: black;">
+</form>
+</div>
+
+<div class="row">
+<div id="answers" style="color:white; background-color: rgba(104, 104, 104, 0.5);"></div>
+</div>
+
+</div>
+</body>
+</html>
